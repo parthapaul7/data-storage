@@ -6,7 +6,7 @@ const PostData = require("../models/data");
 router.get("/save_data",  async (req,res)=>{
 
     const url_id = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&offset=10&filters%5Bstate%5D=Gujarat&filters%5Bdistrict%5D=Amreli&filters%5Bmarket%5D=Amreli"
-
+    console.log("trying to save");
     try {
         const temp = await fetch(url_id)
         const data = await temp.json()
