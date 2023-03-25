@@ -11,6 +11,7 @@ router.get("/save_data",  async (req,res)=>{
         const temp = await fetch(url_id)
         const data = await temp.json()
         
+        console.log(data);
         const response = await PostData.create(data.records);
 
         return res.status(200).json({status:"success",message: response});
