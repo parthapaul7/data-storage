@@ -5,7 +5,7 @@ const PostData = require("../models/data");
 // GET for front page
 router.get("/save_data",  async (req,res)=>{
     let offset = 0;
-    const limit = 100;
+    const limit = 10;
     
     // find total no.
     const tempTotal = await fetch("https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000017366876e4c3941967ef28bacfcc127ad&format=json&limit=10&offset=0")
@@ -14,19 +14,27 @@ router.get("/save_data",  async (req,res)=>{
     console.log("trying to save");
     try {
 
-       let upto = Math.ceil(total/100);
+       let upto = Math.ceil(total/10);
        let response = [];
        for(let i=0;i< upto; i++){ 
+            const temp = await fetch(url_id)
+            const data = await temp.json()
+            let duplicates = 0;
+            offset += 10; 
 
-           const temp = await fetch(url_id)
-           const data = await temp.json()
-           console.log(data);
-           offset += 100; 
-        // response.push(await PostData.create(data.records));
-        response.push(data.records)
-       }
+            try{
+                response.push(...(await PostData.create(data.records)));
+            }
+            catch(err)
+            {
+                console.log(err);
+                duplicates++;
+            }
+            
+        }
 
-        return res.status(200).json({status:"success",message: response});
+        console.log(response);
+        return res.status(200).json({status:"success",message: `${response.length} data saved`, error: `${duplicates} duplicates`});
 
     } catch (error) {
        return res.status(500).json({status:"error",message: error}); 
