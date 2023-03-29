@@ -15,7 +15,7 @@ const DataSchema= new mongoose.Schema({
     timestamps: true
 });
 
-DataSchema.index({state: 1, district: 1, market: 1, commodity: 1, variety: 1}, {unique: true});
+DataSchema.index({state: 1, district: 1, market: 1, commodity: 1, variety: 1, arrival_date: 1}, {unique: true});
 
 
 var Data = mongoose.model('Data', DataSchema);
