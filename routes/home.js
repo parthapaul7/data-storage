@@ -20,7 +20,7 @@ async function cache() {
     console.log(key, value);
     if(value){
         console.log("from cache");
-       return JSON.parse(await client.get(key));
+       return JSON.parse(value);
     }
     const response = await PostData.find();
     client.set(key,JSON.stringify(response));
