@@ -11,10 +11,10 @@ const client = redis.createClient(redisUrl);
 client.set = util.promisify(client.set);
 client.connect();
 
-async function cache() {
+async function cache(query) {
     console.log("trying to cache");
     const today = new Date();
-    const key = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+    const key = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}-${JSON.stringify(query)}`;
 
     const value = await client.get(key);
     console.log(key, value);
@@ -22,7 +22,7 @@ async function cache() {
         console.log("from cache");
        return JSON.parse(value);
     }
-    const response = await PostData.find();
+    const response = await PostData.find({...query});
     client.set(key,JSON.stringify(response));
     return response;
 }
@@ -71,7 +71,7 @@ router.get("/save_data",  async (req,res)=>{
 router.get("/get_data", async (req,res)=>{
     try {
         // const response = await PostData.find({...req.query});
-        const response = await cache();
+        const response = await cache(req.query);
         // console.log(response);
         return res.status(200).json({status:"success",message: response});  
     } catch (error) {
@@ -79,6 +79,17 @@ router.get("/get_data", async (req,res)=>{
        return res.status(500).json({status:"error",message: error}); 
     }
 });
+
+router.get("/get_data_bruteforce", async (req,res)=>{
+    try {
+        const response = await PostData.find({...req.query});
+        return res.status(200).json({status:"success",message: response});  
+    } catch (error) {
+        console.log(error);
+       return res.status(500).json({status:"error",message: error}); 
+    }
+});
+
 
 router.get("/fetch/", async (req,res)=>{
     const offset = req.query.offset;
