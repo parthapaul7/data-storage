@@ -1,6 +1,31 @@
 const express = require("express");
 const router = express.Router();
 const PostData = require("../models/data");
+const util = require("util");
+
+const redis = require("redis");
+const redisUrl = "redis://127.0.1:6379";
+
+
+const client = redis.createClient(redisUrl);
+client.set = util.promisify(client.set);
+client.connect();
+
+async function cache() {
+    console.log("trying to cache");
+    const today = new Date();
+    const key = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+
+    const value = await client.get(key);
+    console.log(key, value);
+    if(value){
+        console.log("from cache");
+       return JSON.parse(await client.get(key));
+    }
+    const response = await PostData.find();
+    client.set(key,JSON.stringify(response));
+    return response;
+}
 
 // GET for front page
 router.get("/save_data",  async (req,res)=>{
@@ -45,9 +70,12 @@ router.get("/save_data",  async (req,res)=>{
 
 router.get("/get_data", async (req,res)=>{
     try {
-        const response = await PostData.find({...req.query});
+        // const response = await PostData.find({...req.query});
+        const response = await cache();
+        // console.log(response);
         return res.status(200).json({status:"success",message: response});  
     } catch (error) {
+        console.log(error);
        return res.status(500).json({status:"error",message: error}); 
     }
 });
