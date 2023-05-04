@@ -85,7 +85,7 @@ const saveData = async ()=> {
 
 
 /// cron job 
-const cronJob = cron.job("00 46 11 * * 1-6", function(){
+const cronJob = cron.job("00 47 11 * * 1-6", function(){
      saveData();
     console.info('cron job completed');
 }); 
