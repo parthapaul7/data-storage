@@ -91,7 +91,10 @@ cron
 
 cronJob.start();
 
-saveData();
+setTimeout(()=>{
+    saveData();
+},2000);
+// saveData();
 
 router.get("/get_data", async (req,res)=>{
     try {
