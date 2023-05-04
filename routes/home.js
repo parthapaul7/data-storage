@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const PostData = require("../models/data");
 const util = require("util");
+const cron = require("cron");
 
 const redis = require("redis");
 const redisUrl = "redis://127.0.1:6379";
@@ -28,7 +29,11 @@ async function cache(query) {
 }
 
 // GET for front page
-router.get("/save_data",  async (req,res)=>{
+// router.get("/save_data",  
+// saveData(req, res)    
+// );
+
+const saveData = async ()=> {
     let offset = 0;
     const limit = 10;
     
@@ -46,27 +51,43 @@ router.get("/save_data",  async (req,res)=>{
             const data = await temp.json()
             let duplicates = 0;
             offset += 10; 
-
+            
+        for(let j=0;j<data.records.length;j++){
+            const unique_id = data.records[j].state + data.records[j].district + data.records[j].market + data.records[j].commodity + data.records[j].variety + data.records[j].arrival_date;
             try{
-                response.push(...(await PostData.create(data.records)));
+                const resp = await PostData.create({...data.records[j], unique_id: unique_id});
+                console.log(resp);
+                response.push(resp);
             }
             catch(err)
             {
                 console.log(err);
+                // console.log(data.records[i]);
                 duplicates++;
             }
-            
+        }
         }
 
         console.log(response);
-        return res.status(200).json({status:"success",message: `${response.length} data saved`, error: `${duplicates} duplicates`});
+        // return res.status(200).json({status:"success",message: `${response.length} data saved`, error: `${duplicates} duplicates`});
 
     } catch (error) {
-       return res.status(500).json({status:"error",message: error}); 
+    //    return res.status(500).json({status:"error",message: error}); 
+        console.log(error);
     }
+}
 
-    
-});
+
+
+/// cron job 
+const cronJob = cron.job("00 55 15 * * 1-6", function(){
+     saveData();
+    console.info('cron job completed');
+}); 
+cron
+
+
+ cronJob.start();
 
 router.get("/get_data", async (req,res)=>{
     try {
