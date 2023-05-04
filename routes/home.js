@@ -50,9 +50,9 @@ const saveData = async ()=> {
        let upto = Math.ceil(total/10);
        let response = [];
 
-       setTimeout( async ()=>{
+       // saving with timeout
        for(let i=0;i< upto; i++){ 
-            const temp = await fetch(url_id)
+            const temp = await fetch(url_id).catch(err=>console.log(err));
             const data = await temp.json()
             let duplicates = 0;
             offset += 10; 
@@ -72,7 +72,6 @@ const saveData = async ()=> {
             }
         }
         }
-    },500);
 
         console.log(response);
         // return res.status(200).json({status:"success",message: `${response.length} data saved`, error: `${duplicates} duplicates`});
