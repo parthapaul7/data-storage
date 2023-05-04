@@ -43,7 +43,7 @@ const saveData = async ()=> {
     const total = (await tempTotal.json()).total
 
     console.log(total, "total");
-    const url_id = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000017366876e4c3941967ef28bacfcc127ad&format=json&limit=${limit}&offset=${offset}`;
+    let url_id = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000017366876e4c3941967ef28bacfcc127ad&format=json&limit=${limit}&offset=${offset}`;
     console.log("trying to save");
     try {
 
@@ -51,12 +51,12 @@ const saveData = async ()=> {
        let response = [];
 
        // saving with timeout
+       let duplicates = 0;
        for(let i=0;i< upto; i++){ 
             const temp = await fetch(url_id).catch(err=>console.log(err));
             const data = await temp.json()
-            let duplicates = 0;
             offset += 10; 
-            
+            url_id = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000017366876e4c3941967ef28bacfcc127ad&format=json&limit=${limit}&offset=${offset}`   
         for(let j=0;j<data.records.length;j++){
             const unique_id = data.records[j].state + data.records[j].district + data.records[j].market + data.records[j].commodity + data.records[j].variety + data.records[j].arrival_date;
             try{
@@ -67,8 +67,8 @@ const saveData = async ()=> {
             catch(err)
             {
                 console.log(err);
-                // console.log(data.records[i]);
                 duplicates++;
+                // console.log(data.records[i]);
             }
         }
         }

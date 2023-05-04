@@ -11,12 +11,16 @@ const DataSchema= new mongoose.Schema({
     min_price: String,
     max_price: String,
     modal_price: String,
-    unique_id: { type:String, unique: true }
+    unique_id: { 
+        duplicate: false,
+        type:String, 
+        unique: true,
+        required: true
+    }
 }, {
     timestamps: true
 });
 
-// DataSchema.index({state: 1, district: 1, market: 1, commodity: 1, variety: 1, arrival_date: 1}, {unique: true});
 
 
 var Data = mongoose.model('Data', DataSchema);
