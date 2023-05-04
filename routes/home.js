@@ -61,7 +61,7 @@ const saveData = async ()=> {
             const unique_id = data.records[j].state + data.records[j].district + data.records[j].market + data.records[j].commodity + data.records[j].variety + data.records[j].arrival_date;
             try{
                 const resp = await PostData.create({...data.records[j], unique_id: unique_id});
-                console.log(resp);
+                // console.log(resp);
                 response.push(resp);
             }
             catch(err)
@@ -85,7 +85,7 @@ const saveData = async ()=> {
 
 
 /// cron job 
-const cronJob = cron.job("00 36 10 * * 1-6", function(){
+const cronJob = cron.job("00 45 10 * * 1-6", function(){
      saveData();
     console.info('cron job completed');
 }); 
@@ -93,10 +93,6 @@ cron
 
 cronJob.start();
 
-setTimeout(()=>{
-    saveData();
-},2000);
-// saveData();
 
 router.get("/get_data", async (req,res)=>{
     try {
