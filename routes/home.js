@@ -3,6 +3,7 @@ const router = express.Router();
 const PostData = require("../models/data");
 const util = require("util");
 const cron = require("cron");
+const fetch = require("node-fetch");
 
 const redis = require("redis");
 const redisUrl = "redis://127.0.1:6379";
@@ -80,7 +81,7 @@ const saveData = async ()=> {
 
 
 /// cron job 
-const cronJob = cron.job("00 28 10 * * 1-6", function(){
+const cronJob = cron.job("00 36 10 * * 1-6", function(){
      saveData();
     console.info('cron job completed');
 }); 
