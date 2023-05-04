@@ -41,6 +41,8 @@ const saveData = async ()=> {
     // find total no.
     const tempTotal = await fetch("https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000017366876e4c3941967ef28bacfcc127ad&format=json&limit=10&offset=0")
     const total = (await tempTotal.json()).total
+
+    console.log(total, "total");
     const url_id = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000017366876e4c3941967ef28bacfcc127ad&format=json&limit=${limit}&offset=${offset}`;
     console.log("trying to save");
     try {
@@ -87,8 +89,9 @@ const cronJob = cron.job("00 36 10 * * 1-6", function(){
 }); 
 cron
 
+cronJob.start();
 
- cronJob.start();
+saveData();
 
 router.get("/get_data", async (req,res)=>{
     try {
