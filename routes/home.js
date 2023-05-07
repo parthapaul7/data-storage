@@ -87,6 +87,9 @@ const saveData = async ()=> {
 /// cron job 
 const cronJob = cron.job("00 00 23 * * 1-6", function(){
      saveData();
+     // clear chache form redis
+
+    client.flushall();
     console.info('cron job completed');
 }); 
 cron
