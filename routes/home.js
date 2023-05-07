@@ -25,10 +25,10 @@ async function cache(query) {
        return JSON.parse(value);
     }
 
-    const limit = req.query.limit;
-    const offset = req.query.offset;
-    delete req.query.limit;
-    delete req.query.offset;
+    const limit = query.limit;
+    const offset = query.offset;
+    delete query.limit;
+    delete query.offset;
     const response = await PostData.find({...query}).limit(limit).skip(offset);
     client.set(key,JSON.stringify(response));
     return response;
