@@ -24,7 +24,12 @@ async function cache(query) {
         console.log("from cache");
        return JSON.parse(value);
     }
-    const response = await PostData.find({...query});
+
+    const limit = req.query.limit;
+    const offset = req.query.offset;
+    delete req.query.limit;
+    delete req.query.offset;
+    const response = await PostData.find({...query}).limit(limit).skip(offset);
     client.set(key,JSON.stringify(response));
     return response;
 }
