@@ -73,7 +73,7 @@ const saveData = async ()=> {
             {
                 console.log(err);
                 duplicates++;
-                // console.log(data.records[i]);
+                console.log(data.records[i]);
             }
         }
         }
@@ -90,11 +90,11 @@ const saveData = async ()=> {
 
 
 /// cron job 
-const cronJob = cron.job("00 00 23 * * 1-6", function(){
+const cronJob = cron.job("00 30 19 * * 1-6", function(){
      saveData();
      // clear chache form redis
 
-    client.flushall();
+    client.flushAll();
     console.info('cron job completed');
 }); 
 cron
