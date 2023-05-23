@@ -4,6 +4,7 @@ const PostData = require("../models/data");
 const util = require("util");
 const cron = require("cron");
 const fetch = require("node-fetch");
+const fs = require("fs");
 
 const redis = require("redis");
 const redisUrl = "redis://127.0.1:6379";
@@ -47,7 +48,6 @@ const saveData = async ()=> {
     const tempTotal = await fetch("https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000017366876e4c3941967ef28bacfcc127ad&format=json&limit=10&offset=0")
     const total = (await tempTotal.json()).total
 
-    console.log(total, "total");
     let url_id = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000017366876e4c3941967ef28bacfcc127ad&format=json&limit=${limit}&offset=${offset}`;
     console.log("trying to save");
     try {
@@ -73,12 +73,13 @@ const saveData = async ()=> {
             {
                 console.log(err);
                 duplicates++;
-                console.log(data.records[i]);
+                // console.log(data.records[i]);
             }
         }
         }
 
         console.log(response);
+        return [total, response.length, duplicates];
         // return res.status(200).json({status:"success",message: `${response.length} data saved`, error: `${duplicates} duplicates`});
 
     } catch (error) {
@@ -90,12 +91,22 @@ const saveData = async ()=> {
 
 
 /// cron job 
-const cronJob = cron.job("00 30 19 * * 1-6", function(){
-     saveData();
-     // clear chache form redis
+console.log(process.env.EX_TIME);
+const cronJob = cron.job(`${process.env.EX_TIME} * * 1-6`, function(){
+     const datas = saveData();
+
+     // clear cache form redis
 
     client.flushAll();
-    console.info('cron job completed');
+    console.log("job completed");
+    // exit after 10 seconds
+    setTimeout(()=>{
+        fs.appendFile('log.txt', `${new Date().toString()} - total:-${datas[0]}, saved:- ${datas[1]} , duplicates:- ${datas[2]} \n`, function (err) {
+            if (err) throw err;
+            console.log('Saved!');
+            });
+
+    }, 10000)   
 }); 
 cron
 
