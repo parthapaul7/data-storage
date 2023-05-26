@@ -2,9 +2,6 @@ fetch('https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api
     .then(resp => resp.json())
     .then(data => {
         async function getData() {
-            fetched = await Product.find({})
-            console.log(fetched[0],"fetched-0 today")
-            //console.log('FETCHED : ',fetched)
     
 
         for(let i=0;i<(fetched).length;i++){
@@ -15,8 +12,6 @@ fetch('https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api
             fetchrecords[i]= {state:data.records[i].state , district:data.records[i].district , market:data.records[i].market , commodity:data.records[i].commodity , modal_price:data.records[i].modal_price , max_price:data.records[i].max_price , min_price:data.records[i].min_price ,arrival_date:data.records[i].arrival_date, variety:data.records[i].variety}
             }
 
-        //console.log('fetcheddata',fetchdata)
-        //console.log('fetchrec',fetchrecords)
         
 
 
