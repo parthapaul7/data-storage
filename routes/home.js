@@ -20,7 +20,7 @@ async function cache(query) {
     const key = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}-${JSON.stringify(query)}`;
 
     const value = await client.get(key);
-    console.log(key, value);
+
     if(value){
         console.log("from cache");
        return JSON.parse(value);
@@ -66,19 +66,17 @@ const saveData = async ()=> {
             const unique_id = data.records[j].state + data.records[j].district + data.records[j].market + data.records[j].commodity + data.records[j].variety + data.records[j].arrival_date;
             try{
                 const resp = await PostData.create({...data.records[j], unique_id: unique_id});
-                // console.log(resp);
                 response.push(resp);
             }
             catch(err)
             {
-                console.log(err);
+                // console.log(err);
                 duplicates++;
-                // console.log(data.records[i]);
             }
         }
         }
 
-        console.log(response);
+        // console.log(response);
         return [total, response.length, duplicates];
         // return res.status(200).json({status:"success",message: `${response.length} data saved`, error: `${duplicates} duplicates`});
 
@@ -92,8 +90,8 @@ const saveData = async ()=> {
 
 /// cron job 
 console.log(process.env.EX_TIME);
-const cronJob = cron.job(`${process.env.EX_TIME} * * 1-6`, function(){
-     const datas = saveData();
+const cronJob = cron.job(`${process.env.EX_TIME} * * 1-6`, async function(){
+     const datas = await saveData();
 
      // clear cache form redis
 
